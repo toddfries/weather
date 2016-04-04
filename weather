@@ -1,0 +1,212 @@
+#!/usr/bin/perl
+
+# Copyright (c) 2016 Todd T. Fries <todd@fries.net>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+use strict;
+use warnings;
+
+use WWW::Wunderground::API 0.06;
+use Cache::FileCache;
+
+my $location = "73120";
+our $api_key = $ENV{WU_API_KEY};
+
+my $conf = $ENV{'HOME'}."/.weather.conf";
+
+if (-f $conf) {
+	eval `cat $conf`;
+}
+
+if (!defined($api_key)) {
+	print "This will not work without an api key\n";
+	exit(1);
+}
+
+my $wu = WWW::Wunderground::API->new(
+	location => $location,
+	api_key => $api_key,
+	auto_api => 1,
+	cache => Cache::FileCache->new({
+		namespace => 'weathercache',
+		default_expires_in => 2400
+	}),
+);
+
+my @hourly_results = @{ $wu->hourly };
+# see 'man WWW::Wunderground::API' for details
+#my @conditions = @{ $wu->conditions };
+#my $astro = $wu->astronomy;
+#print "Sunrise at:".$astro->sunrise->hour.':'.$astro->sunrise->minute."\n";
+#my $simpfore = $wu->forecast;
+#my $geo = $wn->geolookup;
+
+
+binmode STDOUT, ':utf8'; # for degrees symbol
+printf "%-12s %-10s%-3s%-8s%-20s\n",
+	"Date",
+	"Time",
+	"F", #"\x{2109}",
+	"Rain%",
+	"Conditions";
+
+for (@hourly_results)
+{
+	my $cond2;
+	if ($_->{wx} eq $_->{condition}) {
+		$cond2 = "";
+	} else {
+		$cond2 = ", ".$_->{wx};
+	}
+	printf "%3s %2s, %4s %2s:%2s %4i%8i  %-s%s\n",
+		$_->{FCTTIME}->{mon_abbrev},
+		$_->{FCTTIME}->{mday},
+		$_->{FCTTIME}->{year},
+		$_->{FCTTIME}{hour_padded},
+		$_->{FCTTIME}{min},
+		$_->{temp}{english},
+		$_->{pop},
+		$_->{condition},
+		$cond2;
+
+	# Wind Direction
+	# $_->{wdir}->{degrees}	# 70
+	# $_->{wdir}->{dir}	# ENE
+
+	# Wind Speed
+	# $_->{wspd}->{english}	# 12
+	# $_->{wspd}->{metric}	# 19
+
+	# Temperature
+	# $_->{temp}->{english}	# 82
+	# $_->{temp}->{metric}	# 28
+
+	# $_->{mslp}->{english}	# 30.08
+	# $_->{mslp}->{metric}	# 1019
+
+	# $_->{uvi}		# 2
+
+	# $_->{pop}		# 0
+
+	# $_->{FCTTIME}->{UTCDATE}	# ''
+	# $_->{FCTTIME}->{age}		# ''
+	# $_->{FCTTIME}->{ampm}		# PM
+	# $_->{FCTTIME}->{civil}	# 5:00 PM
+	# $_->{FCTTIME}->{epoch}	# 1459807200
+	# $_->{FCTTIME}->{hour}		# 17
+	# $_->{FCTTIME}->{hour_padded}	# 17
+	# $_->{FCTTIME}->{isdst}        # 1
+	# $_->{FCTTIME}->{mday}         # 4
+	# $_->{FCTTIME}->{mday_padded}  # 04
+	# $_->{FCTTIME}->{min}          # 00
+	# $_->{FCTTIME}->{min_unpadded} # 0
+	# $_->{FCTTIME}->{mon}          # 4
+	# $_->{FCTTIME}->{mon_abbrev}   # Apr
+	# $_->{FCTTIME}->{mon_padded}   # 04
+	# $_->{FCTTIME}->{month_name}   # April
+	# $_->{FCTTIME}->{month_name_abbrev}	# Apr
+	# $_->{FCTTIME}->{pretty}	# 5:00 PM CDT on April 04, 2016
+	# $_->{FCTTIME}->{sec}		# 0
+	# $_->{FCTTIME}->{tz}		# ''
+	# $_->{FCTTIME}->{weekday_name}	# Monday
+	# $_->{FCTTIME}->{weekday_name_abbrev}	# Mon
+	# $_->{FCTTIME}->{weekday_name_night}	# Monday Night
+	# $_->{FCTTIME}->{weekday_name_night_unlang}	# Monday
+	# $_->{FCTTIME}->{yday}		# 94
+	# $_->{FCTTIME}->{year}		# 2016
+
+	# $_->{condition}	# Clear
+
+	# $_->{heatindex}->{english}	# -9999
+	# $_->{heatindex}->{metric}	# -9999
+
+	# $_->{snow}->{english}		# 0.0
+	# $_->{snow}->{metric}		# 0
+
+	# $_->{feelslike}->{english}	# 82
+	# $_->{feelslike}->{metric}	# 28
+
+	# $_->{dewpoint}->{english}	# 38
+	# $_->{dewpoint}->{metric}	# 3
+
+	# $_->{icon_url}		# http://icons.wxug.com/i/c/k/clear.gif
+
+	# $_->{qpf}->{english}		# 0.0
+	# $_->{qpf}->{metric}		# 0
+
+	# $_->{icon}			# clear
+
+	# $_->{clear}			# undef (??)
+
+	# $_->{humidity}		# 20
+
+	# $_->{windchill}->{english}	# -9999
+	# $_->{windchill}->{metric}	# -9999
+
+	# $_->{fctcode}			# 1
+
+	# $_->{sky}			# 0
+
+	# $_->{wx}			# Sunny
+
+	# $_->{Sunny}			# undef
+	if (0) {
+		dump_hour($_);
+		exit(0);
+	}
+}
+
+
+if (0) {
+	use Data::Dumper;
+	#my $data = $wu->forecast10day();
+	my $data = $wu->data();
+	my $d = Data::Dumper->new([$data]);
+	$d->Purity(1);
+	$d->Terse(0);
+	$d->Deepcopy(1);
+	$d->Indent(2);
+	$d->Sortkeys(1);
+	#$d->Deparse(1);
+	print $d->Dump();
+}
+
+sub
+dump_hour
+{
+	my ($h) = @_;
+
+	use Data::Dumper;
+	foreach my $key (%{$h}) {
+		my $d;
+		if (ref($key) eq "HASH") {
+			next;
+		}
+		if (ref($key) eq "") {
+			my $val = $h->{$key};
+			$d = Data::Dumper->new([$val]);
+			printf "%s -> ",$key;
+		} else {
+			print ref($key)." = ";
+			$d = Data::Dumper->new([$key]);
+		}
+		$d->Purity(1);
+		$d->Terse(0);
+		$d->Deepcopy(1);
+		$d->Indent(2);
+		$d->Sortkeys(1);
+		#$d->Deparse(1);
+		printf "-> {%s}\n\n", $d->Dump();
+	}
+}
