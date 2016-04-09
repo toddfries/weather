@@ -30,7 +30,7 @@ opearting systems, the environment is visible to other users.
 
 A sample output is as follows:
 
-<code>
+<pre>
 Date         Time      F  Rain%   Conditions          
 Apr  8, 2016 23:00   60       0  Clear
 Apr  9, 2016 00:00   58       0  Clear
@@ -68,4 +68,4 @@ Apr 10, 2016 07:00   60      19  Partly Cloudy, Partly Cloudy/Wind
 Apr 10, 2016 08:00   61       3  Partly Cloudy, Partly Cloudy/Wind
 Apr 10, 2016 09:00   64       3  Partly Cloudy, Partly Cloudy/Wind
 Apr 10, 2016 10:00   68       2  Partly Cloudy, Partly Cloudy/Wind
-</code>
+</pre>
