@@ -20,7 +20,7 @@ use warnings;
 use WWW::Wunderground::API 0.06;
 use Cache::FileCache;
 
-my $location = "73120";
+our $location = "73120";
 our $api_key = $ENV{WU_API_KEY};
 
 my $conf = $ENV{'HOME'}."/.weather.conf";
