@@ -7,9 +7,9 @@ issues.
 
 If you find this is useful and you wish to donate, I accept donations:
 
-BTC: <bitcoin:12NpeRCdSrYrHPha7eHqKsJHvi7d6RHKod>12NpeRCdSrYrHPha7eHqKsJHvi7d6RHKod</bitcoin>
+BTC: <a href="bitcoin:12NpeRCdSrYrHPha7eHqKsJHvi7d6RHKod">12NpeRCdSrYrHPha7eHqKsJHvi7d6RHKod</a>
 
-DCR: <decred:DsUGaQSZFcjzbbhBrKBQdm8mTyAjPQa3ZTJ>DsUGaQSZFcjzbbhBrKBQdm8mTyAjPQa3ZTJ</decred>
+DCR: <a href="decred:DsUGaQSZFcjzbbhBrKBQdm8mTyAjPQa3ZTJ">DsUGaQSZFcjzbbhBrKBQdm8mTyAjPQa3ZTJ</a>
 
 
 Random blathering follows...
