@@ -17,16 +17,25 @@
 use strict;
 use warnings;
 
-use WWW::Wunderground::API 0.06;
 use Cache::FileCache;
+use ReadConf;
+use WWW::Wunderground::API 0.06;
 
-our $location = "73120";
-our $api_key = $ENV{WU_API_KEY};
+my $location = "73120";
+my $api_key = $ENV{WU_API_KEY};
 
 my $conf = $ENV{'HOME'}."/.weather.conf";
 
+my $config;
 if (-f $conf) {
-	eval `cat $conf`;
+	my $r = ReadConf->new(conf => $conf);
+	$config = $r->readconf()->{_};
+}
+
+$api_key = $config->{api_key};
+
+if (defined($config->{location})) {
+	$location = $config->{location};
 }
 
 if (!defined($api_key)) {
